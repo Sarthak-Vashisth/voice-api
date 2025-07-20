@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:8
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+
+  voice-api:
+    build:
+      context: ./app
+    container_name: voice-api
+    depends_on:
+      - mongodb
+    network_mode: "service:mongodb"  # Share network namespace for localhost use
+    devices:
+      - "/dev/snd:/dev/snd"  # Allow microphone access (Linux only)
+    stdin_open: true
+    tty: true
